@@ -1,0 +1,112 @@
+import numpy as np 
+import pandas as pd 
+
+# data viz
+import matplotlib.pyplot as plt
+%matplotlib inline
+import plotly.express as px
+import seaborn as sns
+
+# Machine learning
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.cluster import KMeans
+from sklearn.model_selection import train_test_split
+import os;
+os.listdir('/content/')
+iris = pd.read_csv("/content/Iris.csv")
+print(iris.head())
+print(iris.tail())
+iris.shape
+iris.describe()
+iris.info()
+iris['Species'].value_counts()
+iris.plot(
+   x='Species', 
+   y='SepalLengthCm', 
+   kind='scatter'
+)
+
+plt.show()
+import plotly.express as px
+fig = px.scatter(iris, x="SepalWidthCm", y="SepalLengthCm", color="Species")
+fig.show()
+import seaborn as sns
+sns.set_style("darkgrid")
+# set the custom size for my graphs
+sns.set(rc={'figure.figsize':(8.7,6.27)})
+snsdata = iris.drop(['Id'], axis=1)
+g = sns.pairplot(snsdata, hue='Species', markers='x')
+g = g.map_upper(plt.scatter)
+g = g.map_lower(sns.kdeplot)
+import matplotlib.pyplot as plt
+%matplotlib inline
+sns.pairplot(iris, hue='Species', markers='+')
+plt.show()
+sns.pairplot(iris, hue="Species", size = 3)
+sns.set()
+mapping = {
+    'Iris-setosa' : 1,
+    'Iris-versicolor' : 2,
+    'Iris-virginica' : 3
+}
+
+X = iris.drop(['Id', 'Species'], axis=1).values # Input Feature Values
+y = iris.Species.replace(mapping).values.reshape(rows,1) # Output values
+
+X = np.hstack(((np.ones((rows,1))), X))# Adding one more column for bias
+np.random.seed(0) # Let's set the zero for time being
+theta = np.random.randn(1,5) # Setting values of theta randomly
+
+print("Theta : %s" % (theta))
+iteration = 10000
+learning_rate = 0.003 # If you are going by formula, this is actually alpha.
+J = np.zeros(iteration) # 1 x 10000 maxtix
+# Let's train our model to compute values of theta
+for i in range(iteration):
+    J[i] = (1/(2 * rows) * np.sum((np.dot(X, theta.T) - y) ** 2 ))
+    theta -= ((learning_rate/rows) * np.dot((np.dot(X, theta.T) - y).reshape(1,rows), X))
+
+prediction = np.round(np.dot(X, theta.T))
+
+ax = plt.subplot(111)
+ax.plot(np.arange(iteration), J)
+ax.set_ylim([0,0.15])
+plt.ylabel("Cost Values", color="Green")
+plt.xlabel("No. of Iterations", color="Green")
+plt.title("Mean Squared Error vs Iterations")
+plt.show()
+ax = sns.lineplot(x=np.arange(iteration), y=J)
+plt.show()
+ax = plt.subplot(111)
+
+ax.plot(np.arange(1, 151, 1), y, label='Orignal value', color='red')
+ax.scatter(np.arange(1, 151, 1), prediction, label='Predicted Value')
+
+plt.xlabel("Dataset size", color="Green")
+plt.ylabel("Iris Flower (1-3)", color="Green")
+plt.title("Iris Flower (Iris-setosa = 1, Iris-versicolor = 2, Iris-virginica = 3)")
+
+ax.legend()
+plt.show()
+accuracy = (sum(prediction == y)/float(len(y)) * 100)[0]
+print("The model predicted values of Iris dataset with an overall accuracy of %s" % (accuracy))
+from sklearn.datasets import load_iris
+iris_dataset = load_iris()
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    iris_dataset['data'], iris_dataset['target'], random_state=0)
+    from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=1)
+x_new = np.array([[5.1, 3.5, 1.4, 0.2]])
+prediction = knn.predict(x_new)
+print("Prediction: {}".format(prediction))
+print("Predicted target name:", iris_dataset['target_names'][prediction])
+x_new = np.array([[6, 3, 4, 1]])
+prediction = knn.predict(x_new)
+print("Prediction:", prediction)
+print("Predicted target name:",iris_dataset['target_names'][prediction])
+x_new = np.array([[7, 3, 6, 2]])
+prediction = knn.predict(x_new)
+print("Prediction:", prediction)
+print("Predicted target name:",iris_dataset['target_names'][prediction])
